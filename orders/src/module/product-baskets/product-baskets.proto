@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package product.baskets.v1;
+
+service ProductBasketsService {
+    rpc addProductToBasket(AddProductToBasketRequest) returns (UserBasketResponse) {}
+    rpc updateProductToBasket(UpdateProductToBasketRequest) returns (UserBasketResponse) {}
+    rpc deleteProductInBasket(DeleteProductInBasketRequest) returns (UserBasketResponse) {}
+    rpc clearTheBasket(UserBasketRequest) returns (UserBasketResponse) {}
+    rpc getProductBasket(UserBasketRequest) returns (UserBasketResponse) {}
+}
+
+message Empty {};
+
+message Product {
+    string basketId = 1;
+    string productId = 2;
+    int32 quantity = 3;
+}
+
+message UserBasketResponse {
+    repeated Product products = 1;
+}
+
+message AddProductToBasketRequest {
+    string userId = 1;
+    string productId = 2;
+    int32 quantity = 3;
+}
+
+message UpdateProductToBasketRequest {
+    string basketId = 1;
+    string userId = 2;
+    string productId = 3;
+    int32 quantity = 4;
+}
+
+message DeleteProductInBasketRequest {
+    string basketId = 1;
+    string userId = 2;
+}
+
+message UserBasketRequest {
+    string userId = 1;
+}

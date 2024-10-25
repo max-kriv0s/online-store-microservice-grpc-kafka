@@ -1,0 +1,16 @@
+version: v1
+plugins:
+  - name: server
+    path: ".\\node_modules\\.bin\\protoc-gen-ts_proto.cmd"
+  # - plugin: buf.build/community/stephenh-ts-proto
+    out: src/__proto_generated__
+    strategy: all
+    opt:
+      - addGrpcMetadata=true
+      - outputIndex=true
+      - nestJs=true
+      - addNestjsRestParameter=true
+      - useDate=true
+      - enumsAsLiterals=true
+      - useSnakeTypeName=false
+      - stringEnums=true

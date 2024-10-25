@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package orders.v1;
+
+service OrdersService {
+    rpc createOrder(CreateOrderRequest) returns (OrderResponse) {}
+    rpc canceledOrder(OrderRequest) returns (Empty) {}
+    rpc shipOrder(OrderRequest) returns (Empty) {}
+    rpc findOrder(OrderRequest) returns (OrderResponse) {}
+    rpc findAllOrders(FindAllOrdersRequest) returns (FindAllOrdersResponse) {}
+}
+
+message Empty {};
+
+enum OrderStatus {
+    Created = 0;
+    Confirmed = 1;
+    Processing = 2;
+    Collected = 3; 
+    Done = 4;
+    Canceled = 5;
+}
+
+enum SortDirection {
+    desc = 0;
+    asc = 1;
+};
+
+message SortQuery {
+    string field = 1;
+    SortDirection direction = 2;
+}
+
+message Item {
+    string productId = 1;
+    int32 quantity = 2;
+    float unitPrice = 3;
+    float sum = 4;
+}
+
+message OrderResponse {
+    string orderId = 1;
+    OrderStatus status = 2;
+    int64 date = 3;
+    float totalSum = 4;
+    string customerId = 5;
+    repeated Item items = 6;
+    int64 createdAt = 7;
+}
+
+message FindAllOrderResponse {
+    string orderId = 1;
+    OrderStatus status = 2;
+    int64 date = 3;
+    float totalSum = 4;
+    string customerId = 5;
+    int64 createdAt = 6;
+}
+
+message FindAllOrdersResponse {
+    int32 pagesCount = 1;
+    int32 page = 2;
+    int32 pageSize = 3;
+    int32 totalCount = 4;
+    repeated FindAllOrderResponse items = 5;
+}
+
+message CreateOrderRequest {
+    string customerId = 1;
+    repeated Item items = 2;
+}
+
+message OrderRequest {
+    string orderId = 1;
+    string customerId = 2;
+}
+
+message FindAllOrdersRequest {
+    string customerId = 1;
+    optional int32 pageNumber = 2;
+    optional int32 pageSize = 3;
+    repeated SortQuery sortBy  = 4;
+}

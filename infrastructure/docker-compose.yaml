@@ -1,0 +1,271 @@
+version: "3.9"
+x-default-limits: &default-limits
+  deploy:
+    resources:
+      limits:
+        memory: 512M
+      reservations:
+        memory: 256M
+
+services:
+  db_accounts:
+    image: postgres:16.4-alpine3.20
+    container_name: db-accounts
+    <<: *default-limits
+    restart: always
+    ports:
+      - ${ACCOUNTS_DB_EXTERNAL_PORT}:5432
+    environment:
+      - POSTGRES_DB=${ACCOUNTS_DB_DATABASE}
+      - POSTGRES_USER=${ACCOUNTS_DB_USER}
+      - POSTGRES_PASSWORD=${ACCOUNTS_DB_PASSWORD}
+    volumes:
+      - ${ACCOUNTS_DOCKER_SHARED_DIR}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${ACCOUNTS_DB_USER} -d ${ACCOUNTS_DB_DATABASE}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db_catalog:
+    image: postgres:16.4-alpine3.20
+    container_name: db_catalog
+    <<: *default-limits
+    restart: always
+    ports:
+      - ${CATALOG_DB_EXTERNAL_PORT}:5432
+    environment:
+      - POSTGRES_DB=${CATALOG_DB_DATABASE}
+      - POSTGRES_USER=${CATALOG_DB_USER}
+      - POSTGRES_PASSWORD=${CATALOG_DB_PASSWORD}
+    volumes:
+      - ${CATALOG_DOCKER_SHARED_DIR}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${CATALOG_DB_USER} -d ${CATALOG_DB_DATABASE}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  db_orders:
+    image: postgres:16.4-alpine3.20
+    container_name: db_orders
+    <<: *default-limits
+    restart: always
+    ports:
+      - ${ORDERS_DB_EXTERNAL_PORT}:5432
+    environment:
+      - POSTGRES_DB=${ORDERS_DB_DATABASE}
+      - POSTGRES_USER=${ORDERS_DB_USER}
+      - POSTGRES_PASSWORD=${ORDERS_DB_PASSWORD}
+    volumes:
+      - ${ORDERS_DOCKER_SHARED_DIR}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${ORDERS_DB_USER} -d ${ORDERS_DB_DATABASE}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.0
+    container_name: zookeeper_container
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+    restart: always
+    volumes:
+      - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_data:/var/lib/zookeeper/data
+      - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_log:/var/lib/zookeeper/log
+      - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_secrets:/etc/zookeeper/secrets
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.0
+    container_name: kafka_container
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    depends_on:
+      - zookeeper
+    ports:
+      - 9094:9094
+    restart: always
+    hostname: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://localhost:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "test-topic:1:1"
+    volumes:
+      - ${KAFKA_DOCKER_SHARED_DIR}/kafka_data:/var/lib/kafka/data
+      - ${KAFKA_DOCKER_SHARED_DIR}/kafka_secret:/etc/kafka/secrets
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui_container
+    ports:
+      - 8090:8080
+    restart: always
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    links:
+      - kafka
+      - zookeeper
+    volumes:
+      - ${KAFKA_UI_DOCKER_SHARED_DIR}/kafka-ui_data:/var/lib/kafka-ui
+
+  accounts-service:
+    container_name: accounts-service
+    restart: always
+    build:
+      context: ../accounts
+      dockerfile: ../accounts/Dockerfile
+    ports:
+      - ${ACCOUNTS_PORT}:${ACCOUNTS_PORT}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${ACCOUNTS_PORT}
+      SERVICE_NAME: ${ACCOUNTS_SERVICE_NAME}
+      SERVICE_HOST: ${ACCOUNTS_SERVICE_HOST}
+      DB_HOST: ${ACCOUNTS_DB_HOST}
+      DB_PORT: ${ACCOUNTS_DB_PORT}
+      DB_DATABASE: ${ACCOUNTS_DB_DATABASE}
+      DB_USER: ${ACCOUNTS_DB_USER}
+      DB_PASSWORD: ${ACCOUNTS_DB_PASSWORD}
+      ACCESS_TOKEN_EXPIRATION_TIME: ${ACCOUNTS_ACCESS_TOKEN_EXPIRATION_TIME}
+      ACCESS_TOKEN_SECRET: ${ACCOUNTS_ACCESS_TOKEN_SECRET}
+      REFRESH_TOKEN_EXPIRATION_TIME: ${ACCOUNTS_REFRESH_TOKEN_EXPIRATION_TIME}
+      REFRESH_TOKEN_SECRET: ${ACCOUNTS_REFRESH_TOKEN_SECRET}
+      ADMIN_USER_NAME: ${ACCOUNTS_ADMIN_USER_NAME}
+      ADMIN_EMAIL: ${ACCOUNTS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ACCOUNTS_ADMIN_PASSWORD}
+      LOGGER_LEVEL: ${ACCOUNTS_LOGGER_LEVEL}
+      LOG_DIR: ${ACCOUNTS_LOG_DIR}
+    depends_on:
+      db_accounts:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${ACCOUNTS_PORT}"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  api-gateway-service:
+    container_name: api-gateway-service
+    restart: always
+    build:
+      context: ../api-gateway
+      dockerfile: ../api-gateway/Dockerfile
+    ports:
+      - ${API_GATEWAY_PORT}:${API_GATEWAY_PORT}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${API_GATEWAY_PORT}
+      SERVICE_NAME: ${API_GATEWAY_SERVICE_NAME}
+      SERVICE_HOST: ${API_GATEWAY_SERVICE_HOST}
+      ACCOUNTS_SERVICE_URL: ${API_GATEWAY_ACCOUNTS_SERVICE_URL}
+      USERS_SERVICE_URL: ${API_GATEWAY_USERS_SERVICE_URL}
+      CATEGORIES_SERVICE_URL: ${API_GATEWAY_CATEGORIES_SERVICE_URL}
+      PRODUCTS_SERVICE_URL: ${API_GATEWAY_PRODUCTS_SERVICE_URL}
+      PRICES_SERVICE_URL: ${API_GATEWAY_PRICES_SERVICE_URL}
+      LOGGER_LEVEL: ${API_GATEWAY_LOGGER_LEVEL}
+      LOG_DIR: ${API_GATEWAY_LOG_DIR}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${API_GATEWAY_PORT}"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  catalog-service:
+    container_name: catalog-service
+    restart: always
+    build:
+      context: ../catalog
+      dockerfile: ../catalog/Dockerfile
+    ports:
+      - ${CATALOG_PORT}:${CATALOG_PORT}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${CATALOG_PORT}
+      SERVICE_NAME: ${CATALOG_SERVICE_NAME}
+      SERVICE_HOST: ${CATALOG_SERVICE_HOST}
+      DB_HOST: ${CATALOG_DB_HOST}
+      DB_PORT: ${CATALOG_DB_PORT}
+      DB_DATABASE: ${CATALOG_DB_DATABASE}
+      DB_USER: ${CATALOG_DB_USER}
+      DB_PASSWORD: ${CATALOG_DB_PASSWORD}
+      KAFKA_BROKERS: ${CATALOG_KAFKA_BROKERS}
+      LOGGER_LEVEL: ${CATALOG_LOGGER_LEVEL}
+      LOG_DIR: ${CATALOG_LOG_DIR}
+    depends_on:
+      db_catalog:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${CATALOG_PORT}"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  orders-service:
+    container_name: orders-service
+    restart: always
+    build:
+      context: ../orders
+      dockerfile: ../orders/Dockerfile
+    ports:
+      - ${ORDERS_PORT}:${ORDERS_PORT}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${ORDERS_PORT}
+      SERVICE_NAME: ${ORDERS_SERVICE_NAME}
+      SERVICE_HOST: ${ORDERS_SERVICE_HOST}
+      DB_HOST: ${ORDERS_DB_HOST}
+      DB_PORT: ${ORDERS_DB_PORT}
+      DB_DATABASE: ${ORDERS_DB_DATABASE}
+      DB_USER: ${ORDERS_DB_USER}
+      DB_PASSWORD: ${ORDERS_DB_PASSWORD}
+      KAFKA_BROKERS: ${ORDERS_KAFKA_BROKERS}
+      LOGGER_LEVEL: ${ORDERS_LOGGER_LEVEL}
+      LOG_DIR: ${ORDERS_LOG_DIR}
+    depends_on:
+      db_catalog:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${ORDERS_PORT}"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  default:
+    driver: bridge

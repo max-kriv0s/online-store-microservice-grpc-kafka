@@ -86,10 +86,10 @@ services:
     ports:
       - 22181:2181
     restart: always
-    volumes:
-      - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_data:/var/lib/zookeeper/data
-      - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_log:/var/lib/zookeeper/log
-      - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_secrets:/etc/zookeeper/secrets
+    # volumes:
+    # - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_data:/var/lib/zookeeper/data
+    # - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_log:/var/lib/zookeeper/log
+    # - ${ZOOKEEPER_DOCKER_SHARED_DIR}/zookeeper_secrets:/etc/zookeeper/secrets
 
   kafka:
     image: confluentinc/cp-kafka:7.7.0
@@ -118,9 +118,9 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_DELETE_TOPIC_ENABLE: "true"
       KAFKA_CREATE_TOPICS: "test-topic:1:1"
-    volumes:
-      - ${KAFKA_DOCKER_SHARED_DIR}/kafka_data:/var/lib/kafka/data
-      - ${KAFKA_DOCKER_SHARED_DIR}/kafka_secret:/etc/kafka/secrets
+    # volumes:
+    #   - ${KAFKA_DOCKER_SHARED_DIR}/kafka_data:/var/lib/kafka/data
+    #   - ${KAFKA_DOCKER_SHARED_DIR}/kafka_secret:/etc/kafka/secrets
 
   kafka-ui:
     image: provectuslabs/kafka-ui:v0.7.2

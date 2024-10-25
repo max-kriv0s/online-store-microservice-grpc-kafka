@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package auth.v1;
+
+service AuthService {
+    rpc register (RegisterRequest) returns (UserResponse) {}
+    rpc login (LoginRequest) returns (LoginResponse) {}
+    rpc updateRefreshToken(UpdateRefreshTokenRequest) returns (UpdateRefreshTokenResponse) {}
+    rpc logout(LogoutRequest) returns (Empty) {}
+    rpc validate(ValidateTokenRequest) returns (ValidateAccessTokenResponse) {}
+    rpc validateRefreshToken(ValidateTokenRequest) returns (ValidateRefreshTokenResponse) {}
+}
+
+message Empty {}
+
+message UserResponse {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    string createdAt = 4;
+    string updatedAt = 5;
+    string role = 6;
+ }
+
+// Register
+message RegisterRequest {
+    string username = 1;
+    string email = 2;
+    string password = 3;
+}
+  
+// Login
+ message LoginRequest {
+    string email = 1;
+    string password = 2;
+ }
+  
+message LoginResponse {
+    string accessToken = 1;
+    string refreshToken = 2;
+}
+
+message UpdateRefreshTokenRequest {
+    string userId = 1;
+}
+
+message UpdateRefreshTokenResponse {
+    string accessToken = 1;
+    string refreshToken = 2;
+}
+
+message ValidateTokenRequest {
+    string token = 1;
+}
+
+message ValidateAccessTokenResponse {
+    string userId = 1;
+    repeated string roles = 2;
+}
+
+message ValidateRefreshTokenResponse {
+    string userId = 1;
+    repeated string roles = 2;
+}
+
+message LogoutRequest {
+    string userId = 1;
+}

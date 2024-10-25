@@ -1,0 +1,7 @@
+version: v1
+directories:
+  - src/module/auth
+  - src/module/users
+  - src/module/categories
+  - src/module/products
+  - src/module/prices

@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package prices.v1;
+
+service PricesService {
+    rpc addProductPrice(AddProductPriceRequest) returns (ProductPriceResponse) {};
+    rpc updateProductPrice(UpdateProductPriceRequest) returns (ProductPriceResponse) {};
+    rpc deleteProductPrice(DeleteProductPriceRequest) returns (Empty) {}
+    rpc getProductsPrices(GetProductsPricesRequest) returns (ProductsPricesResponse) {}
+    rpc getCurrentPricesProducts(GetProductsPricesRequest) returns (ProductsPricesResponse) {}
+}
+
+message Empty {};
+
+message ProductPriceResponse {
+    string id = 1;
+    int64 period = 2;
+    string productId = 3;
+    float price = 4;
+}
+
+message ProductsPricesResponse {
+    repeated ProductPriceResponse productsPrices = 1;
+}
+
+message AddProductPriceRequest {
+    int64 period = 1;
+    string productId = 2;
+    float price = 3;
+}
+
+message UpdateProductPriceRequest {
+    string id = 1;
+    optional int64 period = 2;
+    optional string productId = 3;
+    optional float price = 4;
+}
+
+message DeleteProductPriceRequest {
+    string id = 1;
+}
+
+message GetProductsPricesRequest {
+    repeated string productsIds = 1;
+    optional int64 period = 2;
+}

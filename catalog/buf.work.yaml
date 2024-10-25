@@ -1,0 +1,5 @@
+version: v1
+directories:
+  - src/module/categories
+  - src/module/prices
+  - src/module/products

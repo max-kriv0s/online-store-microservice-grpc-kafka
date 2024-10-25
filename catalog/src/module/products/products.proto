@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package products.v1;
+
+service ProductsService {
+    rpc create(CreateProductRequest) returns (ProductResponse) {};
+    rpc update(UpdateProductRequest) returns (ProductResponse) {};
+    rpc delete(DeleteProductRequest) returns (Empty) {}
+    rpc findProduct(FindProductRequest) returns (ProductResponse) {}
+    rpc findAllProducts(FindAllProductsRequest) returns (ProductsResponse) {}
+}
+
+enum SortDirection {
+    desc = 0;
+    asc = 1;
+};
+
+message SortQuery {
+    string field = 1;
+    SortDirection direction = 2;
+}
+
+message Empty {};
+
+message ProductResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    string categoryId = 4;
+    float price = 5;
+}
+
+message ProductsResponse {
+    int32 pagesCount = 1;
+    int32 page = 2;
+    int32 pageSize = 3;
+    int32 totalCount = 4;
+    repeated ProductResponse items = 5;
+}
+
+message CreateProductRequest {
+    string name = 1;
+    string description = 2;
+    string categoryId = 3;
+}
+
+message UpdateProductRequest {
+    string id = 1;
+    optional string name = 2;
+    optional string description = 3;
+    optional string categoryId = 4;
+}
+
+message DeleteProductRequest {
+    string id = 1;
+}
+
+message FindProductRequest {
+    string id = 1;
+}
+
+message FindAllProductsRequest {
+    optional int32 pageNumber = 1;
+    optional int32 pageSize = 2;
+    repeated string categoriesIds = 3;
+    repeated SortQuery sortBy  = 4;
+}

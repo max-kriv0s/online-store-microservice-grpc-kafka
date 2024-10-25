@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package categories.v1;
+
+service CategoriesService {
+    rpc create(CreateCategoryRequest) returns (CategoryResponse) {};
+    rpc update(UpdateCategoryRequest) returns (CategoryResponse) {};
+    rpc delete(DeleteCategoryRequest) returns (Empty) {}
+    rpc findCategory(FindCategoryRequest) returns (CategoryResponse) {}
+    rpc findAllCategory(Empty) returns (CategoriesResponse) {}
+}
+
+message Empty {};
+
+message CategoryResponse {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+}
+
+message CategoriesResponse {
+    repeated CategoryResponse categories = 1;
+}
+
+message CreateCategoryRequest {
+    string name = 1;
+    string description = 2;
+}
+
+message UpdateCategoryRequest {
+    string id = 1;
+    optional string name = 2;
+    optional string description = 3;
+}
+
+message DeleteCategoryRequest {
+    string id = 1;
+}
+
+message FindCategoryRequest {
+    string id = 1;
+}

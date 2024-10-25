@@ -1,0 +1,632 @@
+{
+	"info": {
+		"_postman_id": "b159a57c-04e4-403a-b89a-4178570fd8fd",
+		"name": "online-store-microservice-grpc-kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19104527"
+	},
+	"item": [
+		{
+			"name": "api-gateway",
+			"item": [
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"username\": \"user1\",\r\n\t\"email\": \"user1@test.com\",\r\n\t\"password\": \"password_user1\" \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    // \"email\": \"user1@test.com\",\r\n    // \"password\": \"password_user1\" \r\n    \"email\": \"admin@test.com\",\r\n    \"password\": \"123456\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "refresh-token",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/refresh-token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"refresh-token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "logout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "find-users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find-user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/81443439-dff5-4608-9f8b-497883d0583d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"81443439-dff5-4608-9f8b-497883d0583d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update-user",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"user5_new\",\r\n    \"role\": \"MODERATOR\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/81443439-dff5-4608-9f8b-497883d0583d",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"81443439-dff5-4608-9f8b-497883d0583d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "categories",
+					"item": [
+						{
+							"name": "create",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{presaleBoardToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Молочная продукция\",\r\n    \"description\": \"Молочная продукция\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/categories",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{presaleBoardToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Молочная продукция new\",\r\n    \"description\": \"Описание категории молочная продукция\" \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/categories/1596c9b1-5858-40ee-9cd7-87f39033828a",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"categories",
+										"1596c9b1-5858-40ee-9cd7-87f39033828a"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{presaleBoardToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/categories/6bb65d1f-53be-4a5c-9900-4b3840549a76",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"categories",
+										"6bb65d1f-53be-4a5c-9900-4b3840549a76"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{presaleBoardToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/categories/1596c9b1-5858-40ee-9cd7-87f39033828a",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"categories",
+										"1596c9b1-5858-40ee-9cd7-87f39033828a"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "findAll",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{presaleBoardToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/categories",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"categories"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "products",
+					"item": [
+						{
+							"name": "findAll",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "categoriesIds[]",
+											"value": "8048638a-dafc-40dd-9b33-b82848a0c133",
+											"disabled": true
+										},
+										{
+											"key": "categoriesIds[]",
+											"value": "4df73636-ed30-4d64-997e-3c2c70938dcc",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "name.asc",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/961aac07-0e95-49ea-acc0-972b2dbc7eb9",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"products",
+										"961aac07-0e95-49ea-acc0-972b2dbc7eb9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Молоко\",\r\n    \"description\": \"Молоко\",\r\n    \"categoryId\": \"1596c9b1-5858-40ee-9cd7-87f39033828a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    // \"name\": \"Молоко new 1\",\r\n    // \"description\": \"Молоко new 1\",\r\n    \"categoryId\": \"1596c9b1-5858-40ee-9cd7-87f39033828a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/products/54ff0d0d-6c74-497d-9f0d-a5d749905765",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"products",
+										"54ff0d0d-6c74-497d-9f0d-a5d749905765"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/products/5f2824a6-0cce-4903-92af-889b707f8cb0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"products",
+										"5f2824a6-0cce-4903-92af-889b707f8cb0"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "prices",
+					"item": [
+						{
+							"name": "getProductsPrices",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/prices?productsIds[]=54ff0d0d-6c74-497d-9f0d-a5d749905765",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"prices"
+									],
+									"query": [
+										{
+											"key": "productsIds[]",
+											"value": "54ff0d0d-6c74-497d-9f0d-a5d749905765"
+										},
+										{
+											"key": "period",
+											"value": "2024-09-27",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getCurrentPricesProducts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/prices/current?productsIds[]=54ff0d0d-6c74-497d-9f0d-a5d749905765",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"prices",
+										"current"
+									],
+									"query": [
+										{
+											"key": "productsIds[]",
+											"value": "54ff0d0d-6c74-497d-9f0d-a5d749905765"
+										},
+										{
+											"key": "period",
+											"value": "2024-09-27",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "addProductPrice",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"period\": \"2024-09-10T00:00:00\",\r\n    \"productId\": \"54ff0d0d-6c74-497d-9f0d-a5d749905765\",\r\n    \"price\": 100\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/prices",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"prices"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updateProductPrice",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    // \"period\": \"2024-09-10T00:00:00\",\r\n    // \"productId\": \"54ff0d0d-6c74-497d-9f0d-a5d749905765\",\r\n    \"price\": 90\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/prices/de7bf2b2-5578-4585-8797-21f2af02c39b",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"prices",
+										"de7bf2b2-5578-4585-8797-21f2af02c39b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteProductPrice",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/prices/c8d9b1c3-31c0-4d09-95ef-0c8eb765d6b8",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"prices",
+										"c8d9b1c3-31c0-4d09-95ef-0c8eb765d6b8"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

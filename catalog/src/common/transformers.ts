@@ -1,5 +1,5 @@
 import { TransformFnParams } from 'class-transformer';
-import { SortDirection as GrpcDirection } from 'src/module/products/interfaces/products.interface';
+import { SortDirection as GrpcDirection } from '@/module/products/interfaces/products.interface';
 import { SortDirection, SortQuery } from './pagination';
 
 export const transformSortParams = ({ value }: TransformFnParams): SortQuery => {

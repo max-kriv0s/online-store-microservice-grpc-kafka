@@ -3,9 +3,11 @@ import configuration from './configuration';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import dotenv from 'dotenv';
-dotenv.config({ path: '.env' });
+import { resolveEnvFiles } from './env-file-resolver';
 
-function dataSourceConfiguration(): DataSourceOptions {
+dotenv.config({ path: resolveEnvFiles() });
+
+export function dataSourceConfiguration(): DataSourceOptions {
   const databaseSettings = configuration().databaseSettings;
   return {
     type: 'postgres',

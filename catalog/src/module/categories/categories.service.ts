@@ -7,7 +7,7 @@ import {
 } from './interfaces/categories.interface';
 import { CategoryEntity } from './entities/category.entity';
 import { CategoriesRepository } from './repositories/categories.repository';
-import { ConflictError } from 'src/common/exceptions/conflict.error';
+import { ConflictError } from '@/common/exceptions/conflict.error';
 import { ERROR_CATEGORY_NAME_NOT_UNIQUE, ERROR_CATEGORY_NOT_FOUND } from './categories.constants';
 import { CategoriesMapper } from './categories.mapper';
 import { NotFoundError } from '../../common/exceptions/not-found.error';

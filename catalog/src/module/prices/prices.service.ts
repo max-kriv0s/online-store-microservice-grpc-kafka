@@ -11,7 +11,7 @@ import { PriceEntity } from './entities/price.entity';
 import fns from 'date-fns';
 import { PricesMapper } from './prices.mapper';
 import { CreatePriceDto } from './dto/create-price.dto';
-import { ConflictError } from 'src/common/exceptions/conflict.error';
+import { ConflictError } from '@/common/exceptions/conflict.error';
 import { ERROR_PRICE_ALREADY_ASSIGNED, ERROR_PRICE_NOT_FOUND } from './prices.constants';
 import { NotFoundError } from '../../common/exceptions/not-found.error';
 

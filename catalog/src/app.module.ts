@@ -9,6 +9,7 @@ import { CategoriesModule } from './module/categories/categories.module';
 import { ProductsModule } from './module/products/products.module';
 import { PricesModule } from './module/prices/prices.module';
 import { WarehousesModule } from './module/warehouses/warehouses.module';
+import { resolveEnvFiles } from './config/env-file-resolver';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WarehousesModule } from './module/warehouses/warehouses.module';
       isGlobal: true,
       load: [configuration],
       validationSchema: appValidationSchema,
+      envFilePath: resolveEnvFiles(),
     }),
     DatabaseModule,
     WinstonModule.forRootAsync({

@@ -5,6 +5,8 @@ import { ProductsMapper } from './products.mapper';
 import { ProductEntity } from './entities/product.entity';
 import {
   CreateProductRequest,
+  GetProductsByIdsRequest,
+  GetProductsByIdsResponse,
   ProductResponse,
   ProductsResponse,
   UpdateProductRequest,
@@ -110,5 +112,13 @@ export class ProductsService {
       return productsPrices[0].price;
     }
     return 0;
+  }
+
+  async getProductsByIds({ ids }: GetProductsByIdsRequest): Promise<GetProductsByIdsResponse> {
+    const [products] = await this.productsRepository.findAllProductsAndCount({ ids });
+    const productsIds = products.map((product) => product.id);
+
+    const { productsPrices } = await this.pricesService.getCurrentPricesProducts({ productsIds });
+    return { products: this.mapper.mapAll(products, productsPrices) };
   }
 }

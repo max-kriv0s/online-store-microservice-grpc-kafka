@@ -70,6 +70,14 @@ export interface FindAllProductsRequest {
   sortBy: SortQuery[];
 }
 
+export interface GetProductsByIdsRequest {
+  ids: string[];
+}
+
+export interface GetProductsByIdsResponse {
+  products: ProductResponse[];
+}
+
 export interface ProductsServiceClient {
   create(request: CreateProductRequest, metadata: Metadata, ...rest: any): Observable<ProductResponse>;
 
@@ -80,6 +88,12 @@ export interface ProductsServiceClient {
   findProduct(request: FindProductRequest, metadata: Metadata, ...rest: any): Observable<ProductResponse>;
 
   findAllProducts(request: FindAllProductsRequest, metadata: Metadata, ...rest: any): Observable<ProductsResponse>;
+
+  getProductsByIds(
+    request: GetProductsByIdsRequest,
+    metadata: Metadata,
+    ...rest: any
+  ): Observable<GetProductsByIdsResponse>;
 }
 
 export interface ProductsServiceController {
@@ -108,11 +122,17 @@ export interface ProductsServiceController {
     metadata: Metadata,
     ...rest: any
   ): Promise<ProductsResponse> | Observable<ProductsResponse> | ProductsResponse;
+
+  getProductsByIds(
+    request: GetProductsByIdsRequest,
+    metadata: Metadata,
+    ...rest: any
+  ): Promise<GetProductsByIdsResponse> | Observable<GetProductsByIdsResponse> | GetProductsByIdsResponse;
 }
 
 export function ProductsServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ['create', 'update', 'delete', 'findProduct', 'findAllProducts'];
+    const grpcMethods: string[] = ['create', 'update', 'delete', 'findProduct', 'findAllProducts', 'getProductsByIds'];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod('ProductsService', method)(constructor.prototype[method], method, descriptor);

@@ -1,5 +1,6 @@
 import { Controller } from '@nestjs/common';
 import {
+  GetProductsByIdsResponse,
   ProductResponse,
   PRODUCTS_SERVICE_NAME,
   ProductsResponse,
@@ -13,6 +14,7 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { DeleteProductDto } from './dto/delete-product.dto';
 import { FindProductDto } from './dto/find-product.dto';
 import { FindAllProductsDto } from './dto/find-all-products.dto';
+import { GetProductByIdsDto } from './dto/get-products-by-ids.dto';
 
 @Controller('products')
 @ProductsServiceControllerMethods()
@@ -42,5 +44,10 @@ export class ProductsController implements ProductsServiceController {
   @GrpcMethod(PRODUCTS_SERVICE_NAME)
   async findAllProducts(findAllDto: FindAllProductsDto): Promise<ProductsResponse> {
     return this.productsService.findAllProducts(findAllDto);
+  }
+
+  @GrpcMethod(PRODUCTS_SERVICE_NAME)
+  getProductsByIds(idsDto: GetProductByIdsDto): Promise<GetProductsByIdsResponse> {
+    return this.productsService.getProductsByIds(idsDto);
   }
 }

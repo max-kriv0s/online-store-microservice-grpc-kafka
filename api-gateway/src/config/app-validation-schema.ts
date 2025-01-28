@@ -10,4 +10,6 @@ export const appValidationSchema: Joi.ObjectSchema = Joi.object({
   CATEGORIES_SERVICE_URL: Joi.string().required(),
   PRODUCTS_SERVICE_URL: Joi.string().required(),
   PRICES_SERVICE_URL: Joi.string().required(),
+  PRODUCTS_BASKETS_SERVICE_URL: Joi.string().required(),
+  ORDERS_SERVICE_SETTINGS_URL: Joi.string().required(),
 });

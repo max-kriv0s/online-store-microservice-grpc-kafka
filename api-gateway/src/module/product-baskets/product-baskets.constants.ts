@@ -1,0 +1,2 @@
+export const PRODUCT_BASKETS_CLIENT_NAME = 'PRODUCT_BASKETS_PACKAGE';
+export const PRODUCT_BASKETS_PACKAGE = 'product.baskets.v1';

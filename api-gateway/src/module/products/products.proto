@@ -8,6 +8,7 @@ service ProductsService {
     rpc delete(DeleteProductRequest) returns (Empty) {}
     rpc findProduct(FindProductRequest) returns (ProductResponse) {}
     rpc findAllProducts(FindAllProductsRequest) returns (ProductsResponse) {}
+    rpc getProductsByIds(GetProductsByIdsRequest) returns (GetProductsByIdsResponse) {}
 }
 
 enum SortDirection {
@@ -64,4 +65,12 @@ message FindAllProductsRequest {
     optional int32 pageSize = 2;
     repeated string categoriesIds = 3;
     repeated SortQuery sortBy  = 4;
+}
+
+message GetProductsByIdsRequest {
+    repeated string ids = 1;
+}
+
+message GetProductsByIdsResponse {
+    repeated ProductResponse products = 1;
 }

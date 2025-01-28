@@ -5,3 +5,5 @@ directories:
   - src/module/categories
   - src/module/products
   - src/module/prices
+  - src/module/product-baskets
+  - src/module/orders

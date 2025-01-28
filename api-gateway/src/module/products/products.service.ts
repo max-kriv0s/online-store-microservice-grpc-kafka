@@ -14,12 +14,17 @@ import { ClientGrpc, RpcException } from '@nestjs/microservices';
 import { PRODUCTS_CLIENT_NAME } from './products.constants';
 import { Metadata } from '@grpc/grpc-js';
 import { catchError, firstValueFrom, throwError } from 'rxjs';
+import { ProductsMapper } from './products.mapper';
+import { ProductsObject } from './interfaces/products.interface';
 
 @Injectable()
 export class ProductsService implements OnModuleInit {
   private productsService: ProductsServiceClient;
 
-  constructor(@Inject(PRODUCTS_CLIENT_NAME) private client: ClientGrpc) {}
+  constructor(
+    @Inject(PRODUCTS_CLIENT_NAME) private client: ClientGrpc,
+    private readonly mapper: ProductsMapper,
+  ) {}
 
   onModuleInit() {
     this.productsService = this.client.getService<ProductsServiceClient>(PRODUCTS_SERVICE_NAME);
@@ -67,5 +72,18 @@ export class ProductsService implements OnModuleInit {
         .findAllProducts(queryParams, this.getMetadate())
         .pipe(catchError((error) => throwError(() => new RpcException(error)))),
     );
+  }
+
+  async getProductsByIds(ids: string[]): Promise<ProductsObject> {
+    if (!ids.length) {
+      return {};
+    }
+
+    const productsResponse = await firstValueFrom(
+      this.productsService
+        .getProductsByIds({ ids }, this.getMetadate())
+        .pipe(catchError((error) => throwError(() => new RpcException(error)))),
+    );
+    return this.mapper.productsToProductsObject(productsResponse);
   }
 }

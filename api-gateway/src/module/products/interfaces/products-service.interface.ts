@@ -5,13 +5,13 @@
 // source: products.proto
 
 /* eslint-disable */
-import { Metadata } from "@grpc/grpc-js";
-import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
-import { Observable } from "rxjs";
+import { Metadata } from '@grpc/grpc-js';
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { Observable } from 'rxjs';
 
-export const SortDirection = { desc: "desc", asc: "asc", UNRECOGNIZED: "UNRECOGNIZED" } as const;
+export const SortDirection = { desc: 'desc', asc: 'asc', UNRECOGNIZED: 'UNRECOGNIZED' } as const;
 
-export type SortDirection = typeof SortDirection[keyof typeof SortDirection];
+export type SortDirection = (typeof SortDirection)[keyof typeof SortDirection];
 
 export namespace SortDirection {
   export type desc = typeof SortDirection.desc;
@@ -24,8 +24,7 @@ export interface SortQuery {
   direction: SortDirection;
 }
 
-export interface Empty {
-}
+export interface Empty {}
 
 export interface ProductResponse {
   id: string;
@@ -71,6 +70,14 @@ export interface FindAllProductsRequest {
   sortBy: SortQuery[];
 }
 
+export interface GetProductsByIdsRequest {
+  ids: string[];
+}
+
+export interface GetProductsByIdsResponse {
+  products: ProductResponse[];
+}
+
 export interface ProductsServiceClient {
   create(request: CreateProductRequest, metadata: Metadata, ...rest: any): Observable<ProductResponse>;
 
@@ -81,6 +88,12 @@ export interface ProductsServiceClient {
   findProduct(request: FindProductRequest, metadata: Metadata, ...rest: any): Observable<ProductResponse>;
 
   findAllProducts(request: FindAllProductsRequest, metadata: Metadata, ...rest: any): Observable<ProductsResponse>;
+
+  getProductsByIds(
+    request: GetProductsByIdsRequest,
+    metadata: Metadata,
+    ...rest: any
+  ): Observable<GetProductsByIdsResponse>;
 }
 
 export interface ProductsServiceController {
@@ -109,21 +122,27 @@ export interface ProductsServiceController {
     metadata: Metadata,
     ...rest: any
   ): Promise<ProductsResponse> | Observable<ProductsResponse> | ProductsResponse;
+
+  getProductsByIds(
+    request: GetProductsByIdsRequest,
+    metadata: Metadata,
+    ...rest: any
+  ): Promise<GetProductsByIdsResponse> | Observable<GetProductsByIdsResponse> | GetProductsByIdsResponse;
 }
 
 export function ProductsServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "update", "delete", "findProduct", "findAllProducts"];
+    const grpcMethods: string[] = ['create', 'update', 'delete', 'findProduct', 'findAllProducts', 'getProductsByIds'];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod("ProductsService", method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod('ProductsService', method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod("ProductsService", method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod('ProductsService', method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const PRODUCTS_SERVICE_NAME = "ProductsService";
+export const PRODUCTS_SERVICE_NAME = 'ProductsService';

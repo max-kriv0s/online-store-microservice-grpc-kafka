@@ -32,7 +32,10 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
-  async updateRefreshToken(@CurrentUserId() userId: string, @Res({ passthrough: true }) response: Response): Promise<void> {
+  async updateRefreshToken(
+    @CurrentUserId() userId: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
     const { accessToken, accessExp, refreshToken, refreshExp } = await this.authService.updateRefreshToken(userId);
 
     response.cookie(COOKIE_ACCESS_TOKEN_NAME, accessToken, this.getCookieOptions(accessExp));

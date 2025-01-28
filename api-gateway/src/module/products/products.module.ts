@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ClientsModule } from '@nestjs/microservices';
 import { PRODUCTS_CLIENT_NAME } from './products.constants';
 import { ProductsServiceConfig } from './products-service.config';
+import { ProductsMapper } from './products.mapper';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ProductsServiceConfig } from './products-service.config';
     JwtModule.register({}),
     AuthModule,
   ],
-  providers: [ProductsService],
+  providers: [ProductsService, ProductsMapper],
   controllers: [ProductsController],
+  exports: [ProductsService],
 })
 export class ProductsModule {}
